@@ -228,11 +228,12 @@
         }
 
         // success UI (shared)
-        elShortUrl.value = data.short_url || "";
+        const fullShortUrl = `${BACKEND_BASE_URL}/${data.code}`;
+        elShortUrl.value = fullShortUrl;
         elResult.style.display = "block";
         setMsg(status === 201 ? "Created." : "Already exists.", "ok");
 
-        history.unshift({ short_url: data.short_url, code: data.code, url });
+        history.unshift({ short_url: fullShortUrl, code: data.code, url });
         if (history.length > 10) history.pop();
         renderHistory();
 
