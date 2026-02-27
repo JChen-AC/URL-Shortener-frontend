@@ -230,22 +230,13 @@
         }
 
         // success UI (shared)
-        // success UI (shared)
-        let fullShortUrl = "";
-
-        if (data.short_url) {
-          fullShortUrl = data.short_url.startsWith("http")
-            ? data.short_url
-            : `${BACKEND_BASE_URL}/${data.short_url}`;
-        } else if (data.code) {
-          fullShortUrl = `${BACKEND_BASE_URL}/${data.code}`;
-        }
-
-        elShortUrl.value = fullShortUrl;
+        //elShortUrl.value = data.short_url || "";
+        const out = data.short_url || "";
+        elShortUrl.value = out.startsWith("http") ? out : `https://${out}`;
         elResult.style.display = "block";
         setMsg(status === 201 ? "Created." : "Already exists.", "ok");
 
-        history.unshift({ short_url: fullShortUrl, code: data.code, url });
+        history.unshift({ short_url: data.short_url, code: data.code, url });
         if (history.length > 10) history.pop();
         renderHistory();
 
