@@ -31,8 +31,8 @@
     <label for="url">Long URL</label>
     <input id="url" type="url" placeholder="https://example.com/some/very/long/link" autocomplete="off" />
 
-    <label for="custom_code">Custom alias (optional)</label>
-    <input id="custom_code" type="text" placeholder="my-alias (A-Z a-z 0-9 _ -)" autocomplete="off" />
+    <label for="custom_code" style="display:none;>Custom alias (optional)</label>
+    <input id="custom_code" style="display:none; type="text" placeholder="my-alias (A-Z a-z 0-9 _ -)" autocomplete="off" />
 
     <div class="row" style="margin-top: 12px;">
       <button id="btn">Shorten</button>
@@ -101,7 +101,9 @@
       }
 
       elHistory.innerHTML = history.map((item, idx) => {
-        const safeUrl = item.short_url; // already from backend
+        const safeUrl = item.short_url?.startsWith("http")
+            ? item.short_url
+            : `https://${item.short_url}`;
         const long = item.url;
         return `
           <div class="history-item">
@@ -228,7 +230,17 @@
         }
 
         // success UI (shared)
-        const fullShortUrl = `${BACKEND_BASE_URL}/${data.code}`;
+        // success UI (shared)
+        let fullShortUrl = "";
+
+        if (data.short_url) {
+          fullShortUrl = data.short_url.startsWith("http")
+            ? data.short_url
+            : `${BACKEND_BASE_URL}/${data.short_url}`;
+        } else if (data.code) {
+          fullShortUrl = `${BACKEND_BASE_URL}/${data.code}`;
+        }
+
         elShortUrl.value = fullShortUrl;
         elResult.style.display = "block";
         setMsg(status === 201 ? "Created." : "Already exists.", "ok");
